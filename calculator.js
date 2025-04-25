@@ -445,113 +445,133 @@ function getStorageTierInfo(capacity) {
   }
 }
 
-// Function to calculate scenario - single implementation
-function calculateScenario(scenarioNum) {
-  // Get input values
-  const scenarioName = document.getElementById(`scenario-${scenarioNum}-name`).value;
-  const idcLocation = document.getElementById(`scenario-${scenarioNum}-idc-location`).value;
-  const otherIdcInput = document.getElementById(`scenario-${scenarioNum}-other-idc`);
-  // Use custom IDC location if "Other" is selected
-  const actualIdcLocation = idcLocation === 'Other' && otherIdcInput ? 
-                           (otherIdcInput.value.trim() || 'Custom Location') : 
-                           idcLocation;
+// Helper function to get form values
+function getScenarioInputs(scenarioNum) {
+  const getValue = (id) => document.getElementById(`scenario-${scenarioNum}-${id}`).value;
+  const getNumberValue = (id) => parseFloat(getValue(id)) || 0;
+  
+  return {
+    scenarioName: getValue('name'),
+    idcLocation: getValue('idc-location'),
+    otherIdc: getValue('other-idc'),
+    nodeType: getValue('node-type'),
+    otherNode: getValue('other-node'),
+    hourlyRate: Math.max(0.01, getNumberValue('hourly-rate')),
+    downPaymentPercentage: getNumberValue('down-payment'),
+    numSystems: parseInt(getValue('num-systems')),
+    termLength: parseInt(getValue('term-length')),
+    storageCapacity: parseInt(getValue('storage-capacity'))
+  };
+}
 
-  const nodeType = document.getElementById(`scenario-${scenarioNum}-node-type`).value;
-  const otherNodeInput = document.getElementById(`scenario-${scenarioNum}-other-node`);
-  // Use custom Node type if "Other" is selected
-  const actualNodeType = nodeType === 'Other' && otherNodeInput ? 
-                        (otherNodeInput.value.trim() || 'Custom Node') : 
-                        nodeType;
-
-  const hourlyRate = Math.max(0.01, parseFloat(document.getElementById(`scenario-${scenarioNum}-hourly-rate`).value) || 0.01);
-  const downPaymentPercentage = parseFloat(document.getElementById(`scenario-${scenarioNum}-down-payment`).value);
-  const numSystems = parseInt(document.getElementById(`scenario-${scenarioNum}-num-systems`).value);
-  const termLength = parseInt(document.getElementById(`scenario-${scenarioNum}-term-length`).value);
-  const storageCapacity = parseInt(document.getElementById(`scenario-${scenarioNum}-storage-capacity`).value);
-
-  // Constants
+// Helper function to calculate costs
+function calculateCosts({ hourlyRate, numSystems, termLength, storageCapacity }) {
   const HOURS_PER_MONTH = 730;
   const CARDS_PER_SYSTEM = 8;
-
-  // Derived values
-  const totalCards = numSystems * CARDS_PER_SYSTEM;
-  const storageInfo = getStorageTierInfo(storageCapacity);
-
-  // Calculate costs
+  
   const monthlyCardCost = hourlyRate * HOURS_PER_MONTH;
   const monthlySystemCost = monthlyCardCost * CARDS_PER_SYSTEM;
   const totalMonthlyCost = monthlySystemCost * numSystems;
   let totalContractValue = totalMonthlyCost * termLength;
   
-  // Add storage costs if applicable
-  let monthlyStorageCost = 0;
-  let annualStorageCost = 0;
+  const storageInfo = getStorageTierInfo(storageCapacity);
+  const monthlyStorageCost = storageCapacity > 0 ? storageCapacity * 1024 * storageInfo.costPerGB : 0;
+  
   if (storageCapacity > 0) {
-    monthlyStorageCost = storageCapacity * 1024 * storageInfo.costPerGB;
-    annualStorageCost = monthlyStorageCost * 12;
     totalContractValue += monthlyStorageCost * termLength;
   }
   
-  // Calculate down payment and monthly payments
-  const downPayment = totalContractValue * (downPaymentPercentage / 100);
+  return { totalContractValue, monthlyStorageCost, storageInfo };
+}
+
+function calculateScenario(scenarioNum) {
+  const inputs = getScenarioInputs(scenarioNum);
+  const actualIdcLocation = inputs.idcLocation === 'Other' ? (inputs.otherIdc?.trim() || 'Custom Location') : inputs.idcLocation;
+  const actualNodeType = inputs.nodeType === 'Other' ? (inputs.otherNode?.trim() || 'Custom Node') : inputs.nodeType;
+  
+  const { totalContractValue, monthlyStorageCost, storageInfo } = calculateCosts(inputs);
+  
+  const downPayment = totalContractValue * (inputs.downPaymentPercentage / 100);
   const remainingAmount = totalContractValue - downPayment;
-  const monthlyPayment = remainingAmount / termLength;
+  const monthlyPayment = remainingAmount / inputs.termLength;
   
-  // Build summary using template literals for readability
-  let summary = `GMI Cloud Spec Summary:
-- Scenario Name: ${scenarioName}
-- IDC Location: ${actualIdcLocation}
-- Node Type: ${actualNodeType}
-- Number of Systems: ${numSystems.toLocaleString()} (Total Cards: ${totalCards.toLocaleString()})
-- Term Length: ${termLength} months`;
-
-  if (storageCapacity > 0) {
-    summary += `
-- Storage Capacity: ${storageCapacity.toLocaleString()} TB External Storage
-- Storage SKU: ${storageInfo.sku}
-- Storage Qty: ${storageCapacity.toLocaleString()} TB
-- Cost per GB/Month: $${storageInfo.costPerGB.toFixed(2)}
-- Monthly Storage Cost: ${usdFmt.format(monthlyStorageCost)}
-- Annual Storage Cost: ${usdFmt.format(annualStorageCost)}`;
-  }
-
-  summary += `
-
-Solution Pricing:
-- Hourly Rate per Card: $${hourlyRate.toFixed(2)}`;
+  const summary = generateSummary({
+    ...inputs,
+    actualIdcLocation,
+    actualNodeType,
+    totalContractValue,
+    monthlyStorageCost,
+    storageInfo,
+    downPayment,
+    monthlyPayment
+  });
   
-  if (storageCapacity > 0) {
-    summary += `
-- Storage ${storageInfo.tier} Monthly Cost: ${usdFmt.format(monthlyStorageCost)}`;
-  }
-  
-  summary += `
-- ${downPaymentPercentage}% Down Payment: ${usdFmt.format(downPayment)}
-- Adjusted Monthly Payment: ${usdFmt.format(monthlyPayment)}
-- Total Contract Value: ${usdFmt.format(totalContractValue)}`;
-
-  // Display the summary
+  // Update UI
   document.getElementById(`scenario-${scenarioNum}-summary`).textContent = summary;
+  updateSaveButton(scenarioNum);
   
-  // Return the calculated data
   return {
-    scenarioName,
+    ...inputs,
     idcLocation: actualIdcLocation,
     nodeType: actualNodeType,
-    hourlyRate,
-    downPaymentPercentage,
-    numSystems,
-    termLength,
-    storageCapacity,
-    totalCards,
-    storageTier: storageInfo.tier,
-    storageGbCost: storageInfo.costPerGB,
+    totalCards: inputs.numSystems * 8,
+    storageInfo,
     downPayment,
     monthlyPayment,
     totalContractValue,
-    summary,
-    monthlyStorageCost
+    monthlyStorageCost,
+    summary
   };
+}
+
+function generateSummary(data) {
+  let summary = `GMI Cloud Spec Summary:
+- Scenario Name: ${data.scenarioName}
+- IDC Location: ${data.actualIdcLocation}
+- Node Type: ${data.actualNodeType}
+- Number of Systems: ${data.numSystems.toLocaleString()} (Total Cards: ${(data.numSystems * 8).toLocaleString()})
+- Term Length: ${data.termLength} months`;
+
+  if (data.storageCapacity > 0) {
+    summary += generateStorageSummary(data);
+  }
+  
+  summary += generatePricingSummary(data);
+  
+  return summary;
+}
+
+function generateStorageSummary(data) {
+  return `
+- Storage Capacity: ${data.storageCapacity.toLocaleString()} TB External Storage
+- Storage SKU: ${data.storageInfo.sku}
+- Storage Qty: ${data.storageCapacity.toLocaleString()} TB
+- Cost per GB/Month: $${data.storageInfo.costPerGB.toFixed(2)}
+- Monthly Storage Cost: ${usdFmt.format(data.monthlyStorageCost)}
+- Annual Storage Cost: ${usdFmt.format(data.monthlyStorageCost * 12)}`;
+}
+
+function generatePricingSummary(data) {
+  return `
+Solution Pricing:
+- Hourly Rate per Card: $${data.hourlyRate.toFixed(2)}`;
+  
+  if (data.storageCapacity > 0) {
+    return `
+- Storage ${data.storageInfo.tier} Monthly Cost: ${usdFmt.format(data.monthlyStorageCost)}`;
+  }
+  
+  return `
+- ${data.downPaymentPercentage}% Down Payment: ${usdFmt.format(data.downPayment)}
+- Adjusted Monthly Payment: ${usdFmt.format(data.monthlyPayment)}
+- Total Contract Value: ${usdFmt.format(data.totalContractValue)}`;
+}
+
+function updateSaveButton(scenarioNum) {
+  const saveBtn = document.getElementById(`save-scenario-${scenarioNum}-btn`);
+  if (saveBtn && saveBtn.textContent === 'Saved!') {
+    saveBtn.textContent = 'Save Scenario';
+  }
 }
 
 // Function to calculate partner scenario (similar to regular scenario calculation)
@@ -777,6 +797,7 @@ function generateComparison() {
         { name: 'Total Cards', key: 'totalCards' },
         { name: 'Term Length (months)', key: 'termLength' },
         { name: 'External Storage (TB)', key: 'storageCapacity', format: value => value > 0 ? value.toString() : 'N/A' },
+        { name: 'Storage Rate/GB', key: 'storageGbCost', format: value => value > 0 ? `$${value.toFixed(2)}` : 'N/A' },
         { name: 'Monthly Storage Cost', key: 'monthlyStorageCost', format: value => value > 0 ? `$${value.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}` : 'N/A' },
         { name: 'Hourly Rate per Card', key: 'hourlyRate', format: value => `$${value.toFixed(2)}` },
         { name: 'Down Payment %', key: 'downPaymentPercentage', format: value => `${value}%` },
