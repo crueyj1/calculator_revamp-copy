@@ -1,0 +1,459 @@
+/* Updated styles.css with Partner Margin tab styling */
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+}
+
+h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 30px;
+}
+
+h2 {
+    color: #3498db;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+    margin-top: 30px;
+}
+
+h3 {
+    color: #2980b9;
+    margin-top: 25px;
+}
+
+.calculator-section, .results-section, .comparison-section, .specs-reference-section {
+    margin-bottom: 30px;
+}
+
+.form-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+textarea {
+    min-height: 100px;
+    font-family: Arial, sans-serif;
+}
+
+button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+.calculate-btn {
+    background-color: #3498db;
+    width: 100%;
+}
+
+.save-btn {
+    background-color: #27ae60;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.summary-output {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 4px;
+    border-left: 4px solid #3498db;
+    white-space: pre-wrap;
+    font-family: monospace;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* Tabs styling */
+.tabs {
+    display: flex;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #eee;
+    overflow-x: auto;
+}
+
+.tab-btn {
+    padding: 10px 20px;
+    background-color: #f5f5f5;
+    border: none;
+    border-radius: 4px 4px 0 0;
+    margin-right: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.tab-btn:hover {
+    background-color: #e0e0e0;
+}
+
+.tab-btn.active {
+    background-color: #3498db;
+    color: white;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Comparison styling */
+.comparison-container {
+    margin-top: 20px;
+}
+
+.comparison-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.comparison-card {
+    background-color: #f9f9f9;
+    border-radius: 4px;
+    padding: 15px;
+    border-left: 4px solid #3498db;
+}
+
+.comparison-card h4 {
+    margin-top: 0;
+    color: #3498db;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.options-analysis {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 4px;
+    border-left: 4px solid #e74c3c;
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+#generate-comparison-btn {
+    background-color: #9b59b6;
+}
+
+#generate-comparison-btn:hover {
+    background-color: #8e44ad;
+}
+
+#copy-comparison-btn {
+    background-color: #e67e22;
+}
+
+#copy-comparison-btn:hover {
+    background-color: #d35400;
+}
+
+.copy-success {
+    background-color: #2ecc71 !important;
+}
+
+/* Options Analysis Table Styling - Simplified */
+.options-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.options-table th, 
+.options-table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.options-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+.options-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.options-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Removed green coloring for best value */
+.options-table .best-value {
+    font-weight: bold;
+}
+
+.text-analysis {
+    margin-top: 20px;
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 4px;
+    border-left: 4px solid #3498db;
+}
+
+.text-analysis h4 {
+    margin-top: 0;
+    color: #3498db;
+}
+
+.text-analysis ul {
+    margin-top: 10px;
+    padding-left: 20px;
+}
+
+.text-analysis li {
+    margin-bottom: 8px;
+}
+
+/* Specs Reference Styling */
+.specs-reference-section {
+    padding: 20px 0;
+}
+
+.specs-container {
+    margin-top: 20px;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 4px;
+}
+
+.specs-group {
+    margin-bottom: 30px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 20px;
+}
+
+.specs-group h3 {
+    margin-top: 0;
+    color: #3498db;
+}
+
+.specs-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+}
+
+.specs-table th, 
+.specs-table td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.specs-table th {
+    width: 30%;
+    background-color: #f2f2f2;
+}
+
+/* Partner Margin Tab Styling */
+.partner-margin-field {
+    position: relative;
+    padding-bottom: 25px;
+}
+
+.field-hint {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    font-size: 12px;
+    color: #7f8c8d;
+    font-style: italic;
+}
+
+.partner-margin-btn {
+    background-color: #e74c3c;
+    margin-top: 10px;
+}
+
+.partner-margin-btn:hover {
+    background-color: #c0392b;
+}
+
+.margin-profile {
+    margin-top: 20px;
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 4px;
+    border-left: 4px solid #e74c3c;
+}
+
+.margin-profile h3 {
+    margin-top: 0;
+    color: #e74c3c;
+}
+
+.margin-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+}
+
+.margin-table th, 
+.margin-table td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.margin-table th {
+    width: 50%;
+    background-color: #f2f2f2;
+}
+
+@media (max-width: 768px) {
+    .form-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .tabs {
+        flex-wrap: wrap;
+    }
+    
+    .tab-btn {
+        margin-bottom: 5px;
+    }
+    
+    .button-group {
+        flex-direction: column;
+    }
+    
+    .options-table, .specs-table, .margin-table {
+        font-size: 12px;
+    }
+    
+    .options-table th, 
+    .options-table td,
+    .specs-table th,
+    .specs-table td,
+    .margin-table th,
+    .margin-table td {
+        padding: 8px 5px;
+    }
+}
+
+
+/* Utility hidden class */
+.hidden { display: none !important; }
+
+#scenario-1-other-idc-container,
+#scenario-2-other-idc-container,
+#scenario-3-other-idc-container,
+#scenario-4-other-idc-container,
+#partner-other-idc-container {
+    display: none;
+}
+
+#scenario-1-other-idc-container,
+#scenario-2-other-idc-container,
+#scenario-3-other-idc-container,
+#scenario-4-other-idc-container,
+#scenario-1-other-node-container,
+#scenario-2-other-node-container,
+#scenario-3-other-node-container,
+#scenario-4-other-node-container {
+    display: none;
+}
+
+/* Add these new styles at the bottom of the file */
+
+/* Loader styling for async operations */
+.loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.loader-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 10px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Button feedback styling */
+.btn-success {
+    background-color: #2ecc71 !important;
+}
+
+.btn-error {
+    background-color: #e74c3c !important;
+}
+
+/* Utility classes */
+.text-center {
+    text-align: center;
+}
+
+.mb-10 {
+    margin-bottom: 10px;
+}
+
+.mt-20 {
+    margin-top: 20px;
+}

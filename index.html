@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GMI Cloud Pricing Calculator - Multi-Scenario</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>GMI Cloud Pricing Calculator</h1>
+        
+        <div id="tabs-container" class="tabs">
+            <button class="tab-btn active" data-tab="scenario-1">Scenario 1</button>
+            <button class="tab-btn" data-tab="scenario-2">Scenario 2</button>
+            <button class="tab-btn" data-tab="scenario-3">Scenario 3</button>
+            <button class="tab-btn" data-tab="scenario-4">Scenario 4</button>
+            <button class="tab-btn" data-tab="comparison">Comparison</button>
+        </div>
+        
+        <div class="tab-content active" id="scenario-1">
+            <div class="calculator-section">
+                <h2>Input Parameters - Scenario 1</h2>
+                <div class="form-container">
+                    <div class="form-group">
+                        <label for="scenario-1-name">Scenario Name:</label>
+                        <input type="text" id="scenario-1-name" value="Base Configuration">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="scenario-1-idc-location">IDC Location:</label>
+                        <select id="scenario-1-idc-location" class="idc-location-select" data-scenario="1" onchange="toggleOtherIdcInput(1)">
+                            <option value="Taiwan CHT">Taiwan CHT</option>
+                            <option value="Taiwan FET">Taiwan FET</option>
+                            <option value="Thailand (SuperNap)">Thailand (SuperNap)</option>
+                            <option value="Denver, CO">Denver, CO</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group hidden" id="scenario-1-other-idc-container">
+                        <label for="scenario-1-other-idc">Specify IDC Location:</label>
+                        <input type="text" id="scenario-1-other-idc" placeholder="Enter IDC location">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="scenario-1-node-type">Node Type:</label>
+                        <select id="scenario-1-node-type" onchange="toggleOtherNodeInput(1)">
+                            <option value="H200">H200</option>
+                            <option value="H100">H100</option>
+                            <option value="B200">B200</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group hidden" id="scenario-1-other-node-container">
+                        <label for="scenario-1-other-node">Specify Node Type:</label>
+                        <input type="text" id="scenario-1-other-node" placeholder="Enter node type">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="scenario-1-hourly-rate">Hourly Rate per Card ($):</label>
+                        <input type="number" id="scenario-1-hourly-rate" min="0.01" step="0.01" value="2.20">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="scenario-1-down-payment">Down Payment (%):</label>
+                        <input type="number" id="scenario-1-down-payment" min="0" max="100" value="50">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="scenario-1-num-systems">Number of Systems:</label>
+                        <input type="number" id="scenario-1-num-systems" min="1" value="1">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="scenario-1-term-length">Term Length (months):</label>
+                        <input type="number" id="scenario-1-term-length" min="1" value="6">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="scenario-1-storage-capacity">Storage Capacity (TB):</label>
+                        <input type="number" id="scenario-1-storage-capacity" min="0" value="0">
+                    </div>
+                    
+                    <div class="form-group">
+                        <button id="calculate-scenario-1-btn" class="calculate-btn" data-scenario="1">Calculate</button>
+                        <button id="save-scenario-1-btn" class="save-btn" data-scenario="1">Save Scenario</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="results-section">
+                <h2>Spec Summary - Scenario 1</h2>
+                <pre id="scenario-1-summary" class="summary-output"></pre>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="scenario-2">
+            <div class="calculator-section">
+                <h2>Input Parameters - Scenario 2</h2>
+                <div class="form-container">
+                    <div class="form-group">
+                        <label for="scenario-2-name">Scenario Name:</label>
+                        <input type="text" id="scenario-2-name" value="Alternative Configuration">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="scenario-2-idc-location">IDC Location:</label>
+                        <select id="scenario-2-idc-location" class="idc-location-select" data-scenario="2" onchange="toggleOtherIdcInput(2)">
+                            <option value="Taiwan CHT">Taiwan CHT</option>
+                            <option value="Taiwan FET">Taiwan FET</option>
+                            <option value="Thailand (SuperNap)">Thailand (SuperNap)</option>
+                            <option value="Denver, CO">Denver, CO</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group hidden" id="scenario-2-other-idc-container">
+                        <label for="scenario-2-other-idc">Specify IDC Location:</label>
+                        <input type="text" id="scenario-2-other-idc" placeholder="Enter IDC location">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="scenario-2-node-type">Node Type:</label>
+                        <select id="scenario-2-node-type" onchange="toggleOtherNodeInput(2)">
+                            <option value="H200">H200</option>
+                            <option value="H100">H100</option>
+                            <option value="B200">B200</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group hidden" id="scenario-2-other-node-container">
+                        <label for="scenario-2-other-node">Specify Node Type:</label>
+                        <input type="text" id="scenario-2-other-node" placeholder="Enter node type">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="scenario-2-hourly-rate">Hourly Rate per Card ($):</label>
+                        <input type="number" id="scenario-2-hourly-rate" min="0.01" step="0.01" value="2.20">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="scenario-2-down-payment">Down Payment (%):</label>
+                        <input type="number" id="scenario-2-down-payment" min="0" max="100" value="50">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="scenario-2-num-systems">Number of Systems:</label>
+                        <input type="number" id="scenario-2-num-systems" min="1" value="2">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="scenario-2-term-length">Term Length (months):</label>
+                        <input type="number" id="scenario-2-term-length" min="1" value="6">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="scenario-2-storage-capacity">Storage Capacity (TB):</label>
+                        <input type="number" id="scenario-2-storage-capacity" min="0" value="0">
+                    </div>
+                    
+                    <div class="form-group">
+                        <button id="calculate-scenario-2-btn" class="calculate-btn" data-scenario="2">Calculate</button>
+                        <button id="save-scenario-2-btn" class="save-btn" data-scenario="2">Save Scenario</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="results-section">
+                <h2>Spec Summary - Scenario 2</h2>
+                <pre id="scenario-2-summary" class="summary-output"></pre>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="scenario-3">
+            <div class="calculator-section">
+                <h2>Input Parameters - Scenario 3</h2>
+                <div class="form-container">
+                    <div class="form-group">
+                        <label for="scenario-3-name">Scenario Name:</label>
+                        <input type="text" id="scenario-3-name" value="Expanded Configuration">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="scenario-3-idc-location">IDC Location:</label>
+                        <select id="scenario-3-idc-location" class="idc-location-select" data-scenario="3" onchange="toggleOtherIdcInput(3)">
+                            <option value="Taiwan CHT">Taiwan CHT</option>
+                            <option value="Taiwan FET">Taiwan FET</option>
+                            <option value="Thailand (SuperNap)">Thailand (SuperNap)</option>
+                            <option value="Denver, CO">Denver, CO</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group hidden" id="scenario-3-other-idc-container">
+                        <label for="scenario-3-other-idc">Specify IDC Location:</label>
+                        <input type="text" id="scenario-3-other-idc" placeholder="Enter IDC location">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="scenario-3-node-type">Node Type:</label>
+                        <select id="scenario-3-node-type" onchange="toggleOtherNodeInput(3)">
+                            <option value="H200">H200</option>
+                            <option value="H100">H100</option>
+                            <option value="B200">B200</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group hidden" id="scenario-3-other-node-container">
+                        <label for="scenario-3-other-node">Specify Node Type:</label>
+                        <input type="text" id="scenario-3-other-node" placeholder="Enter node type">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="scenario-3-hourly-rate">Hourly Rate per Card ($):</label>
+                        <input type="number" id="scenario-3-hourly-rate" min="0.01" step="0.01" value="2.20">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="scenario-3-down-payment">Down Payment (%):</label>
+                        <input type="number" id="scenario-3-down-payment" min="0" max="100" value="50">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="scenario-3-num-systems">Number of Systems:</label>
+                        <input type="number" id="scenario-3-num-systems" min="1" value="4">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="scenario-3-term-length">Term Length (months):</label>
+                        <input type="number" id="scenario-3-term-length" min="1" value="12">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="scenario-3-storage-capacity">Storage Capacity (TB):</label>
+                        <input type="number" id="scenario-3-storage-capacity" min="0" value="100">
+                    </div>
+                    
+                    <div class="form-group">
+                        <button id="calculate-scenario-3-btn" class="calculate-btn" data-scenario="3">Calculate</button>
+                        <button id="save-scenario-3-btn" class="save-btn" data-scenario="3">Save Scenario</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="results-section">
+                <h2>Spec Summary - Scenario 3</h2>
+                <pre id="scenario-3-summary" class="summary-output"></pre>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="scenario-4">
+            <div class="calculator-section">
+                <h2>Input Parameters - Scenario 4</h2>
+                <div class="form-container">
+                    <div class="form-group">
+                        <label for="scenario-4-name">Scenario Name:</label>
+                        <input type="text" id="scenario-4-name" value="Enterprise Configuration">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="scenario-4-idc-location">IDC Location:</label>
+                        <select id="scenario-4-idc-location" class="idc-location-select" data-scenario="4" onchange="toggleOtherIdcInput(4)">
+                            <option value="Taiwan CHT">Taiwan CHT</option>
+                            <option value="Taiwan FET">Taiwan FET</option>
+                            <option value="Thailand (SuperNap)">Thailand (SuperNap)</option>
+                            <option value="Denver, CO">Denver, CO</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group hidden" id="scenario-4-other-idc-container">
+                        <label for="scenario-4-other-idc">Specify IDC Location:</label>
+                        <input type="text" id="scenario-4-other-idc" placeholder="Enter IDC location">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="scenario-4-node-type">Node Type:</label>
+                        <select id="scenario-4-node-type" onchange="toggleOtherNodeInput(4)">
+                            <option value="H200">H200</option>
+                            <option value="H100">H100</option>
+                            <option value="B200">B200</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group hidden" id="scenario-4-other-node-container">
+                        <label for="scenario-4-other-node">Specify Node Type:</label>
+                        <input type="text" id="scenario-4-other-node" placeholder="Enter node type">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="scenario-4-hourly-rate">Hourly Rate per Card ($):</label>
+                        <input type="number" id="scenario-4-hourly-rate" min="0.01" step="0.01" value="2.20">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="scenario-4-down-payment">Down Payment (%):</label>
+                        <input type="number" id="scenario-4-down-payment" min="0" max="100" value="50">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="scenario-4-num-systems">Number of Systems:</label>
+                        <input type="number" id="scenario-4-num-systems" min="1" value="8">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="scenario-4-term-length">Term Length (months):</label>
+                        <input type="number" id="scenario-4-term-length" min="1" value="12">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="scenario-4-storage-capacity">Storage Capacity (TB):</label>
+                        <input type="number" id="scenario-4-storage-capacity" min="0" value="500">
+                    </div>
+                    
+                    <div class="form-group">
+                        <button id="calculate-scenario-4-btn" class="calculate-btn" data-scenario="4">Calculate</button>
+                        <button id="save-scenario-4-btn" class="save-btn" data-scenario="4">Save Scenario</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="results-section">
+                <h2>Spec Summary - Scenario 4</h2>
+                <pre id="scenario-4-summary" class="summary-output"></pre>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="comparison">
+            <div class="calculator-section">
+                <h2>Scenario Comparison</h2>
+                <div class="form-container">
+                    <div class="form-group">
+                        <button id="generate-comparison-btn" class="calculate-btn">Generate Comparison</button>
+                        <button id="copy-comparison-btn" class="copy-btn">Copy Comparison</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="results-section">
+                <h2>Comparison Grid</h2>
+                <div id="comparison-grid" class="comparison-grid"></div>
+                
+                <h2>Options Analysis</h2>
+                <div id="options-analysis" class="options-analysis"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="loader" class="loader hidden">
+        <div class="loader-spinner"></div>
+        <span>Processing...</span>
+    </div>
+    
+    <script src="calculator.js" defer></script>
+</body>
+</html>
