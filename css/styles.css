@@ -1,0 +1,26 @@
+// ...existing code...
+
+/* Make sure all tabs are properly styled */
+.tablinks {
+  cursor: pointer;
+}
+
+.tablinks.active {
+  background-color: #ccc;
+  font-weight: bold;
+}
+
+/* Ensure all scenario contents are initially hidden except the active one */
+.tabcontent {
+  display: none;
+}
+
+/* Make calculator buttons respond visually to interaction */
+.calc-button:hover {
+  opacity: 0.8;
+}
+
+.calc-button:active {
+  transform: scale(0.95);
+}
+// ...existing code...
