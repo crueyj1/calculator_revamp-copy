@@ -52,25 +52,73 @@ function copyToClipboard(text, buttonId) {
     });
 }
 
+/**
+ * Switch between tabs
+ * @param {string} tabId - ID of the tab to switch to
+ */
+function switchTab(tabId) {
+  // Hide all tab contents
+  document.querySelectorAll('.tab-content').forEach(content => {
+    content.classList.remove('active');
+  });
+  
+  // Deactivate all tab buttons
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  
+  // Show the selected tab content
+  const selectedContent = document.getElementById(tabId);
+  if (selectedContent) {
+    selectedContent.classList.add('active');
+  }
+  
+  // Activate the selected tab button
+  const selectedBtn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
+  if (selectedBtn) {
+    selectedBtn.classList.add('active');
+  }
+}
+
 // Event Delegation for improved performance
 document.body.addEventListener('click', e => {
+  // Handle tab switching
   if (e.target.matches('.tab-btn')) {
     switchTab(e.target.dataset.tab);
   }
+  
+  // Handle calculate buttons
   if (e.target.matches('.calculate-btn')) {
-    calculateScenario(+e.target.dataset.scenario);
+    const scenarioNum = +e.target.dataset.scenario;
+    if (!isNaN(scenarioNum) && scenarioNum >= 1 && scenarioNum <= 4) {
+      calculateScenario(scenarioNum);
+    }
   }
+  
+  // Handle save buttons
   if (e.target.matches('.save-btn')) {
-    saveScenario(+e.target.dataset.scenario);
+    const scenarioNum = +e.target.dataset.scenario;
+    if (!isNaN(scenarioNum) && scenarioNum >= 1 && scenarioNum <= 4) {
+      saveScenario(scenarioNum);
+    }
   }
+  
+  // Handle clone buttons
   if (e.target.matches('.clone-btn')) {
-    cloneScenarioOne(+e.target.dataset.scenario);
+    const scenarioNum = +e.target.dataset.scenario;
+    if (!isNaN(scenarioNum) && scenarioNum >= 2 && scenarioNum <= 4) {
+      cloneScenarioOne(scenarioNum);
+    }
   }
+  
+  // Handle comparison button
   if (e.target.id === 'generate-comparison-btn') {
     generateComparison();
   }
-  if (e.target.id === 'calculate-partner-btn') {
-    calculatePartner();
+  
+  // Handle copy comparison button
+  if (e.target.id === 'copy-comparison-btn') {
+    copyComparison();
   }
 });
 
@@ -194,8 +242,9 @@ const nodeSpecsData = {
 
 // Initialize the calculator
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize tab system using event delegation (already set up above)
-
+    // Initialize tab system
+    switchTab('scenario-1');
+    
     // Initialize scenarios
     initializeScenarios();
     

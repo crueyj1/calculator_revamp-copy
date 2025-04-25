@@ -6,13 +6,22 @@
 }
 
 .tablinks.active {
-  background-color: #ccc;
+  background-color: #3498db;
+  color: white;
   font-weight: bold;
 }
 
 /* Ensure all scenario contents are initially hidden except the active one */
 .tabcontent {
   display: none;
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
 }
 
 /* Make calculator buttons respond visually to interaction */
