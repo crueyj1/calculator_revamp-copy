@@ -120,16 +120,20 @@ button:hover {
     border-radius: 4px 4px 0 0;
     margin-right: 5px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, color 0.3s;
+    color: #333; /* Darker text color for better contrast on inactive tabs */
+    font-weight: 500; /* Adding slightly bolder text for better readability */
 }
 
 .tab-btn:hover {
     background-color: #e0e0e0;
+    color: #2c3e50; /* Slightly darker text on hover for better visibility */
 }
 
 .tab-btn.active {
     background-color: #3498db;
     color: white;
+    font-weight: 600; /* Make active tab text slightly bolder */
 }
 
 .tab-content {
