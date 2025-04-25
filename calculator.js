@@ -549,7 +549,8 @@ Solution Pricing:
     downPayment,
     monthlyPayment,
     totalContractValue,
-    summary
+    summary,
+    monthlyStorageCost
   };
 }
 
@@ -775,6 +776,8 @@ function generateComparison() {
         { name: 'Number of Systems', key: 'numSystems' },
         { name: 'Total Cards', key: 'totalCards' },
         { name: 'Term Length (months)', key: 'termLength' },
+        { name: 'External Storage (TB)', key: 'storageCapacity', format: value => value > 0 ? value.toString() : 'N/A' },
+        { name: 'Monthly Storage Cost', key: 'monthlyStorageCost', format: value => value > 0 ? `$${value.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}` : 'N/A' },
         { name: 'Hourly Rate per Card', key: 'hourlyRate', format: value => `$${value.toFixed(2)}` },
         { name: 'Down Payment %', key: 'downPaymentPercentage', format: value => `${value}%` },
         { name: 'Down Payment', key: 'downPayment', format: value => `$${value.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}` },
@@ -823,12 +826,9 @@ function generateOptionsAnalysis(savedScenarioNums) {
     // Create rows for each analysis metric
     const metrics = [
         { 
-            name: 'Monthly Cost per Card', 
-            calculate: (scenario) => {
-                const monthlyCardCost = scenario.hourlyRate * 730; // 730 hours per month
-                return monthlyCardCost;
-            },
-            format: value => `$${value.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`
+            name: 'GPU/HR Rate', 
+            calculate: (scenario) => scenario.hourlyRate,
+            format: value => `$${value.toFixed(2)}`
         },
         { 
             name: 'Monthly Cost per System', 
@@ -839,74 +839,38 @@ function generateOptionsAnalysis(savedScenarioNums) {
             format: value => `$${value.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`
         },
         { 
+            name: 'Monthly Storage Cost', 
+            calculate: (scenario) => {
+                if (scenario.storageCapacity > 0) {
+                    const storageInfo = getStorageTierInfo(scenario.storageCapacity);
+                    return scenario.storageCapacity * 1024 * storageInfo.costPerGB;
+                }
+                return 0;
+            },
+            format: value => value > 0 ? `$${value.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}` : 'N/A'
+        },
+        { 
             name: 'Total Monthly Cost', 
             calculate: (scenario) => {
                 const monthlyCardCost = scenario.hourlyRate * 730; // 730 hours per month
-                return monthlyCardCost * 8 * scenario.numSystems; // 8 cards per system
+                const computeCost = monthlyCardCost * 8 * scenario.numSystems;
+                const storageInfo = getStorageTierInfo(scenario.storageCapacity);
+                const storageCost = scenario.storageCapacity > 0 ? scenario.storageCapacity * 1024 * storageInfo.costPerGB : 0;
+                return computeCost + storageCost;
             },
             format: value => `$${value.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`
-        },
-        { 
-            name: 'Cost per Card for Full Term', 
-            calculate: (scenario) => {
-                const monthlyCardCost = scenario.hourlyRate * 730; // 730 hours per month
-                return monthlyCardCost * scenario.termLength;
-            },
-            format: value => `$${value.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`
-        },
-        { 
-            name: 'Best Value Option', 
-            calculate: (scenario) => {
-                // This will be determined after comparing all scenarios
-                return null;
-            },
-            format: value => value ? 'Yes' : ''
         }
     ];
     
-    // Calculate values for each metric
-    const metricValues = {};
-    metrics.forEach(metric => {
-        metricValues[metric.name] = {};
-        savedScenarioNums.forEach(num => {
-            metricValues[metric.name][num] = metric.calculate(savedScenarios[num]);
-        });
-    });
-    
-    // Determine best value option (lowest cost per card for full term)
-    const costPerCardMetric = 'Cost per Card for Full Term';
-    let lowestCost = Infinity;
-    let bestValueScenario = null;
-    
-    savedScenarioNums.forEach(num => {
-        const cost = metricValues[costPerCardMetric][num];
-        if (cost < lowestCost) {
-            lowestCost = cost;
-            bestValueScenario = num;
-        }
-    });
-    
-    // Set best value option
-    savedScenarioNums.forEach(num => {
-        metricValues['Best Value Option'][num] = (num === bestValueScenario);
-    });
-    
-    // Create rows for the table
+    // Calculate and display metrics
     metrics.forEach(metric => {
         const row = document.createElement('tr');
         row.innerHTML = `<td>${metric.name}</td>`;
         
         savedScenarioNums.forEach(num => {
-            const value = metricValues[metric.name][num];
+            const value = metric.calculate(savedScenarios[num]);
             const displayValue = metric.format(value);
-            
-            // Add class for best value option
-            let className = '';
-            if (metric.name === 'Best Value Option' && value) {
-                className = 'best-value';
-            }
-            
-            row.innerHTML += `<td class="${className}">${displayValue}</td>`;
+            row.innerHTML += `<td>${displayValue}</td>`;
         });
         
         table.appendChild(row);
