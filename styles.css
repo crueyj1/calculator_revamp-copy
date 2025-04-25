@@ -102,6 +102,16 @@ button:hover {
     margin-top: 10px;
 }
 
+.clone-btn {
+    background-color: #f39c12;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.clone-btn:hover {
+    background-color: #d35400;
+}
+
 .partner-margin-btn {
     background-color: #e74c3c;
     margin-top: 10px;

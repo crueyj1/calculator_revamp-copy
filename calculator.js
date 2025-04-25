@@ -63,6 +63,9 @@ document.body.addEventListener('click', e => {
   if (e.target.matches('.save-btn')) {
     saveScenario(+e.target.dataset.scenario);
   }
+  if (e.target.matches('.clone-btn')) {
+    cloneScenarioOne(+e.target.dataset.scenario);
+  }
   if (e.target.id === 'generate-comparison-btn') {
     generateComparison();
   }
@@ -925,5 +928,76 @@ function loadNodeSpecs() {
         });
     } else {
         specsContainer.innerHTML = '<p>No specifications available for this location.</p>';
+    }
+}
+
+/**
+ * Clone settings from Scenario 1 to another scenario
+ * @param {number} targetScenarioNum - The scenario number to clone to (2, 3, or 4)
+ */
+function cloneScenarioOne(targetScenarioNum) {
+    if (targetScenarioNum < 2 || targetScenarioNum > 4) return;
+    
+    try {
+        // Get all input values from scenario 1
+        const sourceName = document.getElementById('scenario-1-name').value;
+        const sourceIdcLocation = document.getElementById('scenario-1-idc-location').value;
+        const sourceOtherIdc = document.getElementById('scenario-1-other-idc')?.value || '';
+        const sourceNodeType = document.getElementById('scenario-1-node-type').value;
+        const sourceOtherNode = document.getElementById('scenario-1-other-node')?.value || '';
+        const sourceHourlyRate = document.getElementById('scenario-1-hourly-rate').value;
+        const sourceDownPayment = document.getElementById('scenario-1-down-payment').value;
+        const sourceNumSystems = document.getElementById('scenario-1-num-systems').value;
+        const sourceTermLength = document.getElementById('scenario-1-term-length').value;
+        const sourceStorageCapacity = document.getElementById('scenario-1-storage-capacity').value;
+        
+        // Generate sequential name
+        let newName = sourceName;
+        if (targetScenarioNum === 2) {
+            newName = sourceName + ' 1';
+        } else if (targetScenarioNum === 3) {
+            newName = sourceName + ' 2';
+        } else if (targetScenarioNum === 4) {
+            newName = sourceName + ' 3';
+        }
+        
+        // Set values in target scenario
+        document.getElementById(`scenario-${targetScenarioNum}-name`).value = newName;
+        document.getElementById(`scenario-${targetScenarioNum}-idc-location`).value = sourceIdcLocation;
+        document.getElementById(`scenario-${targetScenarioNum}-node-type`).value = sourceNodeType;
+        document.getElementById(`scenario-${targetScenarioNum}-hourly-rate`).value = sourceHourlyRate;
+        document.getElementById(`scenario-${targetScenarioNum}-down-payment`).value = sourceDownPayment;
+        document.getElementById(`scenario-${targetScenarioNum}-num-systems`).value = sourceNumSystems;
+        document.getElementById(`scenario-${targetScenarioNum}-term-length`).value = sourceTermLength;
+        document.getElementById(`scenario-${targetScenarioNum}-storage-capacity`).value = sourceStorageCapacity;
+        
+        // Handle "Other" values for IDC location and Node type
+        const otherIdcInput = document.getElementById(`scenario-${targetScenarioNum}-other-idc`);
+        if (otherIdcInput && sourceIdcLocation === 'Other') {
+            otherIdcInput.value = sourceOtherIdc;
+        }
+        
+        const otherNodeInput = document.getElementById(`scenario-${targetScenarioNum}-other-node`);
+        if (otherNodeInput && sourceNodeType === 'Other') {
+            otherNodeInput.value = sourceOtherNode;
+        }
+        
+        // Update visibility of "Other" input fields
+        toggleOtherIdcInput(targetScenarioNum);
+        toggleOtherNodeInput(targetScenarioNum);
+        
+        // Auto calculate the scenario to show updated results
+        calculateScenario(targetScenarioNum);
+        
+        // Provide visual feedback on button
+        const cloneBtn = document.getElementById(`clone-scenario-${targetScenarioNum}-btn`);
+        const originalText = cloneBtn.textContent;
+        cloneBtn.textContent = 'Cloned!';
+        setTimeout(() => {
+            cloneBtn.textContent = originalText;
+        }, 2000);
+        
+    } catch (error) {
+        console.error('Error cloning scenario:', error);
     }
 }
