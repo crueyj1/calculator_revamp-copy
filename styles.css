@@ -385,23 +385,9 @@ button:hover {
 /* Utility hidden class */
 .hidden { display: none !important; }
 
-#scenario-1-other-idc-container,
-#scenario-2-other-idc-container,
-#scenario-3-other-idc-container,
-#scenario-4-other-idc-container,
-#partner-other-idc-container {
-    display: none;
-}
-
-#scenario-1-other-idc-container,
-#scenario-2-other-idc-container,
-#scenario-3-other-idc-container,
-#scenario-4-other-idc-container,
-#scenario-1-other-node-container,
-#scenario-2-other-node-container,
-#scenario-3-other-node-container,
-#scenario-4-other-node-container {
-    display: none;
+/* Style for other input fields */
+.form-group.hidden {
+    display: none !important;
 }
 
 /* Add these new styles at the bottom of the file */

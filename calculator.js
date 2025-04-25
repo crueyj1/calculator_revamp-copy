@@ -262,6 +262,29 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Add copy buttons to each scenario tab
     addCopyButtonsToScenarios();
+
+    // Set up IDC and Node type change events for all scenarios
+    for (let i = 1; i <= 4; i++) {
+        // IDC location change events
+        const idcSelect = document.getElementById(`scenario-${i}-idc-location`);
+        if (idcSelect) {
+            idcSelect.addEventListener('change', function() {
+                toggleOtherIdcInput(i);
+            });
+            // Initialize the visibility state
+            toggleOtherIdcInput(i);
+        }
+        
+        // Node type change events
+        const nodeSelect = document.getElementById(`scenario-${i}-node-type`);
+        if (nodeSelect) {
+            nodeSelect.addEventListener('change', function() {
+                toggleOtherNodeInput(i);
+            });
+            // Initialize the visibility state
+            toggleOtherNodeInput(i);
+        }
+    }
 });
 
 // Function to add copy buttons to each scenario tab
@@ -350,7 +373,15 @@ function toggleOtherIdcInput(scenarioNum) {
     const idcSelect = document.getElementById(`scenario-${scenarioNum}-idc-location`);
     const otherIdcContainer = document.getElementById(`scenario-${scenarioNum}-other-idc-container`);
     
-    otherIdcContainer.style.display = idcSelect.value === 'Other' ? 'block' : 'none';
+    if (idcSelect && otherIdcContainer) {
+        otherIdcContainer.classList.toggle('hidden', idcSelect.value !== 'Other');
+        
+        // If changing from "Other" back to a standard option, clear the custom input
+        if (idcSelect.value !== 'Other') {
+            const otherIdcInput = document.getElementById(`scenario-${scenarioNum}-other-idc`);
+            if (otherIdcInput) otherIdcInput.value = '';
+        }
+    }
 }
 
 // Function to toggle other Node Type input field
@@ -358,7 +389,15 @@ function toggleOtherNodeInput(scenarioNum) {
     const nodeSelect = document.getElementById(`scenario-${scenarioNum}-node-type`);
     const otherNodeContainer = document.getElementById(`scenario-${scenarioNum}-other-node-container`);
     
-    otherNodeContainer.style.display = nodeSelect.value === 'Other' ? 'block' : 'none';
+    if (nodeSelect && otherNodeContainer) {
+        otherNodeContainer.classList.toggle('hidden', nodeSelect.value !== 'Other');
+        
+        // If changing from "Other" back to a standard option, clear the custom input
+        if (nodeSelect.value !== 'Other') {
+            const otherNodeInput = document.getElementById(`scenario-${scenarioNum}-other-node`);
+            if (otherNodeInput) otherNodeInput.value = '';
+        }
+    }
 }
 
 // Function to calculate storage tier and cost
@@ -398,11 +437,17 @@ function calculateScenario(scenarioNum) {
   const scenarioName = document.getElementById(`scenario-${scenarioNum}-name`).value;
   const idcLocation = document.getElementById(`scenario-${scenarioNum}-idc-location`).value;
   const otherIdcInput = document.getElementById(`scenario-${scenarioNum}-other-idc`);
-  const actualIdcLocation = idcLocation === 'Other' ? otherIdcInput.value : idcLocation;
+  // Use custom IDC location if "Other" is selected
+  const actualIdcLocation = idcLocation === 'Other' && otherIdcInput ? 
+                           (otherIdcInput.value.trim() || 'Custom Location') : 
+                           idcLocation;
 
   const nodeType = document.getElementById(`scenario-${scenarioNum}-node-type`).value;
   const otherNodeInput = document.getElementById(`scenario-${scenarioNum}-other-node`);
-  const actualNodeType = nodeType === 'Other' ? otherNodeInput.value : nodeType;
+  // Use custom Node type if "Other" is selected
+  const actualNodeType = nodeType === 'Other' && otherNodeInput ? 
+                        (otherNodeInput.value.trim() || 'Custom Node') : 
+                        nodeType;
 
   const hourlyRate = Math.max(0.01, parseFloat(document.getElementById(`scenario-${scenarioNum}-hourly-rate`).value) || 0.01);
   const downPaymentPercentage = parseFloat(document.getElementById(`scenario-${scenarioNum}-down-payment`).value);
@@ -500,11 +545,17 @@ function calculatePartnerScenario() {
     const scenarioName = document.getElementById('partner-scenario-name').value;
     const idcLocation = document.getElementById('partner-idc-location').value;
     const otherIdcInput = document.getElementById('partner-other-idc');
-    const actualIdcLocation = idcLocation === 'Other' ? otherIdcInput.value : idcLocation;
+    // Use custom IDC location if "Other" is selected
+    const actualIdcLocation = idcLocation === 'Other' && otherIdcInput ? 
+                             (otherIdcInput.value.trim() || 'Custom Location') : 
+                             idcLocation;
     
     const nodeType = document.getElementById('partner-node-type').value;
     const otherNodeInput = document.getElementById('partner-other-node');
-    const actualNodeType = nodeType === 'Other' ? otherNodeInput.value : nodeType;
+    // Use custom Node type if "Other" is selected
+    const actualNodeType = nodeType === 'Other' && otherNodeInput ? 
+                          (otherNodeInput.value.trim() || 'Custom Node') : 
+                          nodeType;
     
     const hourlyRate = parseFloat(document.getElementById('partner-hourly-rate').value);
     const downPaymentPercentage = parseFloat(document.getElementById('partner-down-payment').value);
