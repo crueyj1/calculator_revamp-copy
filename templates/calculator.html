@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Financial Calculator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="calculator">
+        <h1>Financial Calculator</h1>
+        
+        <!-- Scenario tabs -->
+        <div class="tab">
+            <!-- Modify the scenario buttons to ensure clean HTML output -->
+            <button class="tablinks" onclick="openScenario(event, 'scenario1')" id="defaultOpen">Scenario 1</button>
+            <button class="tablinks" onclick="openScenario(event, 'scenario2')">Scenario 2</button>
+            <button class="tablinks" onclick="openScenario(event, 'scenario3')">Scenario 3</button>
+            <button class="tablinks" onclick="openScenario(event, 'scenario4')">Scenario 4</button>
+            <button class="tablinks" onclick="openScenario(event, 'scenario5')">Scenario 5</button>
+        </div>
+
+        <!-- Tab content for each scenario -->
+        <div id="scenario1" class="tabcontent">
+            <!-- ...existing code... -->
+        </div>
+
+        <div id="scenario2" class="tabcontent">
+            <!-- ...existing code... -->
+        </div>
+
+        <div id="scenario3" class="tabcontent">
+            <!-- ...existing code... -->
+        </div>
+
+        <div id="scenario4" class="tabcontent">
+            <!-- ...existing code... -->
+        </div>
+
+        <div id="scenario5" class="tabcontent">
+            <!-- ...existing code... -->
+        </div>
+        
+        <!-- Results section -->
+        <div id="results">
+            <!-- ...existing code... -->
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
