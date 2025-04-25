@@ -191,101 +191,121 @@ const nodeSpecsData = {
 
 // Initialize the calculator
 document.addEventListener('DOMContentLoaded', function() {
-    // Set up tab switching
-    const tabButtons = document.querySelectorAll('.tab-btn');
-    tabButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const tabId = this.getAttribute('data-tab');
-            
-            // Remove active class from all tabs and buttons
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            
-            // Add active class to current tab and button
-            this.classList.add('active');
-            document.getElementById(tabId).classList.add('active');
-        });
-    });
+    // Initialize tab system using event delegation (already set up above)
+
+    // Initialize scenarios
+    initializeScenarios();
     
-    // Set up calculate buttons dynamically for all scenarios
-    for (let i = 1; i <= 4; i++) {
-        const calculateBtn = document.getElementById(`calculate-scenario-${i}-btn`);
-        if (calculateBtn) {
-            calculateBtn.addEventListener('click', function() {
-                calculateScenario(i);
-            });
-        }
-        
-        // Initialize toggle functions for "Other" fields
-        toggleOtherIdcInput(i);
-        toggleOtherNodeInput(i);
-    }
-    
-    // Set up save buttons - FIX: Direct button selection instead of loop
-    document.getElementById('save-scenario-1-btn').addEventListener('click', function() {
-        saveScenario(1);
-    });
-    
-    document.getElementById('save-scenario-2-btn').addEventListener('click', function() {
-        saveScenario(2);
-    });
-    
-    document.getElementById('save-scenario-3-btn').addEventListener('click', function() {
-        saveScenario(3);
-    });
-    
-    document.getElementById('save-scenario-4-btn').addEventListener('click', function() {
-        saveScenario(4);
-    });
-    
-    // Set up partner margin tab buttons
-    const calculatePartnerBtn = document.getElementById('calculate-partner-btn');
-    calculatePartnerBtn.addEventListener('click', function() {
-        calculatePartnerScenario();
-    });
-    
-    const calculatePartnerMarginBtn = document.getElementById('calculate-partner-margin-btn');
-    calculatePartnerMarginBtn.addEventListener('click', function() {
-        calculatePartnerMargin();
-    });
-    
-    // Set up comparison button
-    const generateComparisonBtn = document.getElementById('generate-comparison-btn');
-    generateComparisonBtn.addEventListener('click', generateComparison);
-    
-    // Set up copy button
-    const copyComparisonBtn = document.getElementById('copy-comparison-btn');
-    copyComparisonBtn.addEventListener('click', copyComparison);
-    
-    // Initialize node specs data from localStorage if available
+    // Initialize node specs data from localStorage
     initializeNodeSpecsData();
     
     // Add copy buttons to each scenario tab
     addCopyButtonsToScenarios();
+    
+    // Set up comparison button
+    document.getElementById('generate-comparison-btn')?.addEventListener('click', generateComparison);
+    
+    // Set up copy button
+    document.getElementById('copy-comparison-btn')?.addEventListener('click', copyComparison);
+});
 
-    // Set up IDC and Node type change events for all scenarios
+/**
+ * Set up all scenario-related functionality
+ */
+function initializeScenarios() {
+    // Initialize form controls for all 4 scenarios
     for (let i = 1; i <= 4; i++) {
-        // IDC location change events
+        // Initialize toggle functions for location and node inputs
         const idcSelect = document.getElementById(`scenario-${i}-idc-location`);
         if (idcSelect) {
-            idcSelect.addEventListener('change', function() {
-                toggleOtherIdcInput(i);
-            });
-            // Initialize the visibility state
-            toggleOtherIdcInput(i);
+            idcSelect.addEventListener('change', () => toggleOtherIdcInput(i));
+            toggleOtherIdcInput(i); // Initialize visibility state
         }
         
-        // Node type change events
         const nodeSelect = document.getElementById(`scenario-${i}-node-type`);
         if (nodeSelect) {
-            nodeSelect.addEventListener('change', function() {
-                toggleOtherNodeInput(i);
-            });
-            // Initialize the visibility state
-            toggleOtherNodeInput(i);
+            nodeSelect.addEventListener('change', () => toggleOtherNodeInput(i));
+            toggleOtherNodeInput(i); // Initialize visibility state
         }
     }
-});
+    
+    // Set up partner margin tab buttons
+    document.getElementById('calculate-partner-btn')?.addEventListener('click', calculatePartnerScenario);
+    document.getElementById('calculate-partner-margin-btn')?.addEventListener('click', calculatePartnerMargin);
+}
+
+/**
+ * Toggle the "Other" input field for IDC location with improved null checking
+ */
+function toggleOtherIdcInput(scenarioNum) {
+    const idcSelect = document.getElementById(`scenario-${scenarioNum}-idc-location`);
+    const otherIdcContainer = document.getElementById(`scenario-${scenarioNum}-other-idc-container`);
+    
+    if (!idcSelect || !otherIdcContainer) return;
+    
+    const isOtherSelected = idcSelect.value === 'Other';
+    otherIdcContainer.classList.toggle('hidden', !isOtherSelected);
+    
+    // Clear the custom input when switching away from "Other"
+    if (!isOtherSelected) {
+        const otherIdcInput = document.getElementById(`scenario-${scenarioNum}-other-idc`);
+        if (otherIdcInput) otherIdcInput.value = '';
+    }
+}
+
+/**
+ * Toggle the "Other" input field for Node Type with improved null checking
+ */
+function toggleOtherNodeInput(scenarioNum) {
+    const nodeSelect = document.getElementById(`scenario-${scenarioNum}-node-type`);
+    const otherNodeContainer = document.getElementById(`scenario-${scenarioNum}-other-node-container`);
+    
+    if (!nodeSelect || !otherNodeContainer) return;
+    
+    const isOtherSelected = nodeSelect.value === 'Other';
+    otherNodeContainer.classList.toggle('hidden', !isOtherSelected);
+    
+    // Clear the custom input when switching away from "Other"
+    if (!isOtherSelected) {
+        const otherNodeInput = document.getElementById(`scenario-${scenarioNum}-other-node`);
+        if (otherNodeInput) otherNodeInput.value = '';
+    }
+}
+
+/**
+ * Initialize node specs data with improved error handling and data merging
+ */
+function initializeNodeSpecsData() {
+    try {
+        const savedNodeSpecs = localStorage.getItem('nodeSpecsData');
+        if (!savedNodeSpecs) return;
+        
+        const parsedData = JSON.parse(savedNodeSpecs);
+        
+        // More efficient merge strategy
+        for (const location in parsedData) {
+            // If location doesn't exist in default data, add it entirely
+            if (!nodeSpecsData[location]) {
+                nodeSpecsData[location] = parsedData[location];
+                continue;
+            }
+            
+            // For existing locations, create a map of titles for faster lookup
+            const existingTitlesMap = new Map(
+                nodeSpecsData[location].map(item => [item.title, true])
+            );
+            
+            // Only add items with new titles
+            parsedData[location].forEach(item => {
+                if (!existingTitlesMap.has(item.title)) {
+                    nodeSpecsData[location].push(item);
+                }
+            });
+        }
+    } catch (e) {
+        console.error('Error initializing node specs data:', e);
+    }
+}
 
 // Function to add copy buttons to each scenario tab
 function addCopyButtonsToScenarios() {
@@ -340,64 +360,6 @@ function copyPartnerSummary() {
   }
   
   copyToClipboard(textToCopy, 'copy-partner-btn');
-}
-
-// Function to initialize node specs data from localStorage if available
-function initializeNodeSpecsData() {
-    const savedNodeSpecs = localStorage.getItem('nodeSpecsData');
-    if (savedNodeSpecs) {
-        try {
-            const parsedData = JSON.parse(savedNodeSpecs);
-            // Merge with default data, keeping user additions
-            for (const location in parsedData) {
-                if (!nodeSpecsData[location]) {
-                    nodeSpecsData[location] = parsedData[location];
-                } else {
-                    // Check for new clusters in existing locations
-                    const existingTitles = nodeSpecsData[location].map(item => item.title);
-                    parsedData[location].forEach(item => {
-                        if (!existingTitles.includes(item.title)) {
-                            nodeSpecsData[location].push(item);
-                        }
-                    });
-                }
-            }
-        } catch (e) {
-            console.error('Error parsing saved node specs data:', e);
-        }
-    }
-}
-
-// Function to toggle other IDC input field
-function toggleOtherIdcInput(scenarioNum) {
-    const idcSelect = document.getElementById(`scenario-${scenarioNum}-idc-location`);
-    const otherIdcContainer = document.getElementById(`scenario-${scenarioNum}-other-idc-container`);
-    
-    if (idcSelect && otherIdcContainer) {
-        otherIdcContainer.classList.toggle('hidden', idcSelect.value !== 'Other');
-        
-        // If changing from "Other" back to a standard option, clear the custom input
-        if (idcSelect.value !== 'Other') {
-            const otherIdcInput = document.getElementById(`scenario-${scenarioNum}-other-idc`);
-            if (otherIdcInput) otherIdcInput.value = '';
-        }
-    }
-}
-
-// Function to toggle other Node Type input field
-function toggleOtherNodeInput(scenarioNum) {
-    const nodeSelect = document.getElementById(`scenario-${scenarioNum}-node-type`);
-    const otherNodeContainer = document.getElementById(`scenario-${scenarioNum}-other-node-container`);
-    
-    if (nodeSelect && otherNodeContainer) {
-        otherNodeContainer.classList.toggle('hidden', nodeSelect.value !== 'Other');
-        
-        // If changing from "Other" back to a standard option, clear the custom input
-        if (nodeSelect.value !== 'Other') {
-            const otherNodeInput = document.getElementById(`scenario-${scenarioNum}-other-node`);
-            if (otherNodeInput) otherNodeInput.value = '';
-        }
-    }
 }
 
 // Function to calculate storage tier and cost
